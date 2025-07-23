@@ -1,17 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Proyecto Final</title>
+    <link rel="stylesheet" href="src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount:wght@100..900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="app"></div>
-    
-     <div id="experience">
+    <!-- Mensaje de bienvenida -->
+    <div id="welcome-message" class="welcome-message">
+      ¡Bienvenidos al Proyecto Final!
+    </div>
+
+    <!-- Tabla de información (se muestra después del mensaje inicial) -->
+    <div id="info-table-container" class="info-table-container hidden">
+      <div class="info-header">
+        <span class="info-title">Información del Proyecto</span>
+        <button class="close-btn" onclick="loadScriptModule()">✖</button>
+      </div>
+      <table class="info-table">
+        <tr>
+          <td class="profile-cell">
+            <img src="public/images/ar.png" alt="Anilys" class="profile-image" />
+            <div class="profile-name">Anilys Rodríguez</div>
+          </td>
+          <td class="profile-cell">
+            <img src="public/images/mr.png" alt="Martin" class="profile-image" />
+            <div class="profile-name">Martin Gómez</div>
+          </td>
+        </tr>
+      </table>
+      <div class="welcome-section">
+        <p class="welcome-text">
+          Bienvenidos a nuestro proyecto semestral, realizado con tecnologías como <strong>Three.js</strong>, <strong>Blender</strong> y <strong>Vercel</strong>.
+        </p>
+        <img src="public/images/cat.ico" alt="Imagen del proyecto" class="welcome-image" />
+      </div>
+    </div>
+
+    <!-- Canvas de Three.js -->
+    <div id="experience" class="hidden">
       <canvas id="experience-canvas" class="experience-canvas"></canvas>
     </div>
-    <script type="module" src="/src/main.js"></script>
+
+    <!-- Script de transición inicial -->
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+          const welcome = document.getElementById("welcome-message");
+          welcome.classList.add("fade-out");
+
+          setTimeout(() => {
+            welcome.remove();
+            document.getElementById("info-table-container").classList.remove("hidden");
+          }, 1000);
+        }, 2000);
+      });
+
+      function loadScriptModule() {
+        document.getElementById("info-table-container").remove();
+        document.getElementById("experience").classList.remove("hidden");
+
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src = "/src/main.js";
+        document.body.appendChild(script);
+      }
+      
+    </script>
   </body>
 </html>

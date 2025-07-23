@@ -1,0 +1,154 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #e89e9e;
+  color: #fff;
+}
+
+.welcome-message {
+  font-family: 'Bitcount', sans-serif;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  color: #C8A2C8;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  background-color: #2f2d2d;
+  padding: 20px 40px;
+  border-radius: 12px;
+  opacity: 1;
+  transition: opacity 1s ease;
+  z-index: 999;
+  text-align: center;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes zoomInFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translate(-50%, -50%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+
+@keyframes zoomOutFade {
+  0% {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) translate(-50%, -50%);
+  }
+}
+
+.info-table-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #4d124a;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  z-index: 998;
+  animation: zoomInFade 0.7s ease-out;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Clase que se aplica al cerrar para animar la salida */
+.info-table-container.hide {
+  animation: zoomOutFade 0.6s ease-in forwards;
+}
+
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #ffffff;
+  cursor: pointer;
+}
+.info-title {
+  display: block; /* para que se comporte como un título */
+  text-align: center;
+  font-size: 1.8rem; /* tamaño de letra */
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #bfaadc; /* morado pastel fuerte */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.info-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #475a76;
+}
+/*imagenes de tabla*/
+.profile-cell {
+  text-align: center;
+  padding: 10px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10%;
+  margin-bottom: 8px;
+  border: 3px solid #f8c8dc; /* borde rosado pastel */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profile-name {
+  font-weight: bold;
+  color: #C8A2C8; /* morado pastel */
+  font-size: 1rem;
+  margin-top: 4px;
+}
+/*Bienvenida 2*/
+.welcome-section {
+  text-align: center;
+  margin: 30px auto;
+  padding: 20px;
+  max-width: 600px;
+  background-color: #f8c8dc22; 
+  border-radius: 12px;
+}
+
+.welcome-text {
+  font-size: 1.2rem;
+  color: #c5aaea;
+  margin-bottom: 20px;
+}
+
+.welcome-image {
+  max-width: 100%;
+  height: auto;
+}
