@@ -1,4 +1,4 @@
-  import gsap from "gsap";
+import gsap from "gsap";
 
   import { Howl } from "howler";
   import * as THREE from "three";
@@ -17,6 +17,13 @@ const size = {
 
 const xAxisFans = [];
 const yAxisFans = [];
+
+let chairPivot = null; // pivot for rotating the chair seat
+let seatMesh = null;          // reference to the seat mesh
+let isDraggingChair = false;  // drag state
+let dragStartX = 0;           // pointer start position (px)
+let startRotationY = 0;       // chair rotation at drag start
+const CHAIR_SENSITIVITY = 2;  // drag-to-rotation multiplier
 
 const raycasterObjects = [];
 let currentIntersects = [];
@@ -81,7 +88,7 @@ Object.entries(textureMap).forEach(([key, paths]) => {
  nightTexture.minFilter = THREE.LinearFilter;
  nightTexture.magFilter = THREE.LinearFilter;
  loadedTextures.night[key] = nightTexture;
-});    
+});
 
 // Reuseable Materials
 const glassMaterial = new THREE.MeshPhysicalMaterial({
@@ -121,6 +128,42 @@ videoTexture.flipY = false;
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 });
 
+window.addEventListener("pointerdown", onPointerDown);
+window.addEventListener("pointermove", onPointerMove);
+window.addEventListener("pointerup",   onPointerUp);
+
+function onPointerDown(event) {
+  if (!seatMesh || !chairPivot) return;
+
+  // update pointer coords for raycaster
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+
+  const intersects = raycaster.intersectObject(seatMesh, true);
+  if (intersects.length > 0) {
+    isDraggingChair = true;
+    dragStartX = event.clientX;
+    startRotationY = chairPivot.rotation.y;
+    controls.enabled = false;          // lock orbit while dragging chair
+  }
+}
+
+function onPointerMove(event) {
+  if (!isDraggingChair || !chairPivot) return;
+
+  const deltaX = event.clientX - dragStartX;
+  const angleDelta = (deltaX / window.innerWidth) * Math.PI * CHAIR_SENSITIVITY;
+  chairPivot.rotation.y = startRotationY + angleDelta;
+}
+
+function onPointerUp() {
+  if (isDraggingChair) {
+    isDraggingChair = false;
+    controls.enabled = true;           // re‑enable camera orbit
+  }
+}
+
 /**chair */
 
 loader.load("/models/IsometricRoom_MGomez_ARodriguezVFinal.glb", (glb) => {
@@ -152,7 +195,7 @@ loader.load("/models/IsometricRoom_MGomez_ARodriguezVFinal.glb", (glb) => {
                         child.material = material;
 
                         if(child.name.includes("Fan")) {
-                          if(child.name.includes("Fan_2") || 
+                          if(child.name.includes("Fan_2") ||
                             child.name.includes("Fan_4")
                           ) {
                             xAxisFans.push(child);
@@ -160,12 +203,45 @@ loader.load("/models/IsometricRoom_MGomez_ARodriguezVFinal.glb", (glb) => {
                             yAxisFans.push(child);
                           }
                         }
-                       
+
                     }
                 });
             }
         }
     });
+    // Creaccion de un pivot para la silla para que gire
+    const seat = glb.scene.getObjectByName('Chair_Top_Fourth');   // esto es el nombre del mesh de la silla en Blender
+
+    if (seat) {
+      // Calculate the world‑space center of the seat mesh
+      seat.geometry.computeBoundingBox();
+      const centerLocal = new THREE.Vector3();
+      seat.geometry.boundingBox.getCenter(centerLocal);
+      seat.localToWorld(centerLocal);            // to world coordinates
+
+      // Create an empty pivot at that center
+      chairPivot = new THREE.Object3D();
+      chairPivot.position.copy(centerLocal);
+
+      // Insert the pivot under the seat's original parent
+      const originalParent = seat.parent;
+      originalParent.add(chairPivot);
+
+      // Re‑parent the seat to the pivot and compensate its offset
+      seat.parent.remove(seat);
+      seat.position.sub(centerLocal.clone().sub(originalParent.position));
+      chairPivot.add(seat);
+
+      // Store reference for drag interaction
+      seatMesh = seat;
+      // optional: include the seat in raycaster objects for hover, etc.
+      raycasterObjects.push(seatMesh);
+    } else {
+      console.warn('Chair seat not found – verify mesh name in Blender (Chair_Top_Fourth).');
+    }
+    glb.scene.traverse((o) => {
+  if (o.isMesh) console.log(o.name);
+});
     scene.add(glb.scene);
 });
 
@@ -176,12 +252,12 @@ const sizes = {
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-    35, 
-    sizes.width / sizes.height, 
-    0.1, 
+    35,
+    sizes.width / sizes.height,
+    0.1,
     1000
 );
-camera.position.set( 
+camera.position.set(
 17.49173098423395, 9.108969527553887, 17.850992894238058
 );
 camera.position.z = 5;
@@ -247,7 +323,7 @@ function handleRaycasterInteraction() {
       }
     });
 
-    
+
   }
 }
 
@@ -263,7 +339,7 @@ window.addEventListener("resize", () => {
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-}); 
+});
 
 const render = () => {
     controls.update();
@@ -317,4 +393,3 @@ const render = () => {
 };
 
 render();
-
