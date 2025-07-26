@@ -44,7 +44,7 @@ Este proyecto muestra cómo llevar un modelo 3D (creado en Blender y exportado a
 
 ```
 .
-├─ public/           # Skybox, audio, texturas, favicon, etc.
+├─ public/           # Skybox, audio, texturas, icono, video de demostracion, etc.
 ├─ src/
 │  ├─ assets/        # Modelos GLB, imágenes, shaders crudos
 │  ├─ core/          # Config de escena: cámara, luces, renderer
